@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สไลด์การสอน: โปรโตคอลในระบบรักษาความปลอดภัย (ปวช.)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .slide { display: none; }
+    .slide.active { display: flex; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between select-none overflow-hidden">
+
+  <!-- Top Navigation & Progress Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 px-8 py-4 flex justify-between items-center z-50">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-sm">
+        SEC
+      </div>
+      <div>
+        <h1 class="text-sm font-bold text-white">วิชา อุปกรณ์อิเล็กทรอนิกส์ในระบบรักษาความปลอดภัย (20105-2025)</h1>
+        <p class="text-xs text-slate-400">ชุดสไลด์ประกอบการสอนควบคู่ SecurNet SimLab</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-4">
+      <span id="slide-indicator" class="text-xs mono text-indigo-400 font-bold bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+        สไลด์ 1 / 10
+      </span>
+      <a href="index.html" target="_blank" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg font-medium transition flex items-center gap-1.5">
+        <span>⚡</span> เปิดเว็บ SimLab
+      </a>
+    </div>
+  </header>
+
+  <!-- Presentation Stage (Slide Container) -->
+  <main class="flex-1 flex items-center justify-center p-6 md:p-12 max-w-6xl mx-auto w-full">
+
+    <!-- SLIDE 1: COVER -->
+    <section class="slide active flex-col items-center text-center space-y-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-mono">
+        ระดับประกาศนียบัตรวิชาชีพ (ปวช.) สาขาวิชาช่างอิเล็กทรอนิกส์
+      </div>
+      <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        โปรโตคอลการสื่อสาร<br>ในระบบรักษาความปลอดภัยสมัยใหม่
+      </h2>
+      <p class="text-slate-400 max-w-2xl text-base leading-relaxed">
+        เจาะลึกสัญญาณไฟฟ้าทางกายภาพ, สัญญาณพัลส์ดิจิทัล, โครงข่ายกล้องวงจรปิด และระบบควบคุมอัตโนมัติข้ามแพลตฟอร์มด้วย AI
+      </p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 w-full max-w-3xl text-left">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <div class="text-xs text-indigo-400 font-mono mb-1">MODULE 1</div>
+          <div class="text-sm font-bold">Wiegand 26-bit</div>
+          <div class="text-[11px] text-slate-500 mt-1">Access Control สายสัญญาณ</div>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <div class="text-xs text-cyan-400 font-mono mb-1">MODULE 2</div>
+          <div class="text-sm font-bold">RS-485 Bus</div>
+          <div class="text-[11px] text-slate-500 mt-1">Daisy Chain & Polling</div>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <div class="text-xs text-emerald-400 font-mono mb-1">MODULE 3</div>
+          <div class="text-sm font-bold">TCP/IP & RTSP</div>
+          <div class="text-[11px] text-slate-500 mt-1">CCTV & ONVIF Stream</div>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <div class="text-xs text-amber-400 font-mono mb-1">MODULE 4</div>
+          <div class="text-sm font-bold">AI Linkage</div>
+          <div class="text-[11px] text-slate-500 mt-1">MQTT & Fail-Safe</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: MODULE 1 - WIEGAND CONCEPT -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-indigo-400">MODULE 1 : ACCESS CONTROL PROTOCOL</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">Physical Layer</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">หลักการและการต่อสายสัญญาณ Wiegand 26-bit[cite: 1, 5]</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="space-y-4">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <h4 class="text-sm font-bold text-emerald-400 mb-2">ชุดสายสัญญาณ 3 เส้นหลัก[cite: 5]</h4>
+            <ul class="space-y-2 text-xs text-slate-300">
+              <li>• <strong class="text-emerald-400">DATA0 (เขียว):</strong> ใช้ส่งพัลส์สำหรับบิตข้อมูล `0`[cite: 5]</li>
+              <li>• <strong class="text-cyan-400">DATA1 (ขาว):</strong> ใช้ส่งพัลส์สำหรับบิตข้อมูล `1`[cite: 5]</li>
+              <li>• <strong class="text-slate-400">GND (ดำ):</strong> สายกราวด์ร่วมอ้างอิงแรงดันไฟฟ้า[cite: 5]</li>
+            </ul>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <h4 class="text-sm font-bold text-amber-400 mb-2">ลักษณะทางไฟฟ้า (Signal Timing)[cite: 5]</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              สภาวะปกติ (Idle) แรงดันจะแช่อยู่ที่ระดับ <strong>+5V (HIGH)</strong>[cite: 5] เมื่อต้องการส่งบิตข้อมูล แรงดันจะถูกดึงลงกราวด์ <strong>0V (Active-LOW)</strong> เป็นพัลส์สั้นๆ กว้างประมาณ 50–100 µs[cite: 5]
+            </p>
+          </div>
+        </div>
+        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <h4 class="text-sm font-bold text-indigo-400 mb-2">จุดเชื่อมโยงกับหน้าปฏิบัติการ SimLab</h4>
+          <div class="aspect-video bg-slate-950 rounded-lg border border-slate-800 flex flex-col items-center justify-center p-4 text-center">
+            <span class="text-3xl mb-2">📊</span>
+            <span class="text-xs text-slate-300 font-medium">สังเกตรูปคลื่นพัลส์ตกบนหน้าจอ Oscilloscope เสมือน</span>
+            <span class="text-[11px] text-slate-500 mt-1">เปรียบเทียบรูปคลื่นจริงที่ได้จากการวัดด้วยเครื่องมือวัดอิเล็กทรอนิกส์</span>
+          </div>
+          <div class="text-xs text-slate-400 mt-3">
+            💡 ให้นักเรียนสังเกตว่าเมื่อส่งบิต 0 และ 1 เส้นกราฟสีใดจะตกลงมาที่ 0V
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: MODULE 1 - FRAME & TROUBLESHOOTING -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-indigo-400">MODULE 1 : DATA DECODING & FAULTS</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">Troubleshooting</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">โครงสร้างเฟรม 26 บิต และการตรวจซ่อมหน้างาน[cite: 5]</h3>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-center mono text-xs">
+        <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl">
+          <div class="text-amber-400 font-bold">Bit 1</div>
+          <div class="text-white mt-1">Even Parity</div>
+          <div class="text-[10px] text-slate-400">เช็ค 12 บิตแรก</div>
+        </div>
+        <div class="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl col-span-1">
+          <div class="text-emerald-400 font-bold">Bits 2–9 (8 บิต)[cite: 5]</div>
+          <div class="text-white mt-1">Facility Code[cite: 5]</div>
+          <div class="text-[10px] text-slate-400">รหัสหน่วยงาน (0–255)[cite: 5]</div>
+        </div>
+        <div class="bg-cyan-500/10 border border-cyan-500/30 p-3 rounded-xl col-span-1">
+          <div class="text-cyan-400 font-bold">Bits 10–25 (16 บิต)[cite: 5]</div>
+          <div class="text-white mt-1">Card ID[cite: 5]</div>
+          <div class="text-[10px] text-slate-400">รหัสบัตร (0–65535)[cite: 5]</div>
+        </div>
+        <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl">
+          <div class="text-amber-400 font-bold">Bit 26[cite: 5]</div>
+          <div class="text-white mt-1">Odd Parity[cite: 5]</div>
+          <div class="text-[10px] text-slate-400">เช็ค 12 บิตหลัง</div>
+        </div>
+      </div>
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+        <h4 class="text-sm font-bold text-rose-400 flex items-center gap-2">
+          <span>⚠️</span> กรณีศึกษาข้อผิดพลาด: ต่อสาย DATA0 และ DATA1 สลับกัน
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300">
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+            <span class="text-amber-400 font-bold block mb-1">พฤติกรรมของข้อมูล:</span>
+            บิต 0 จะกลายเป็น 1 และบิต 1 จะกลายเป็น 0 ข้อมูลในเฟรมจะกลับด้านทั้งหมด ทำให้หมายเลขบัตรและรหัสหน่วยงานอ่านค่าไม่ได้
+          </div>
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+            <span class="text-rose-400 font-bold block mb-1">การตัดสินใจของตู้ควบคุม:</span>
+            ระบบคำนวณผลรวม Parity Check ล้มเหลว ตู้คอนโทรลเลอร์จะปฏิเสธสิทธิ์ (Access Denied) และไม่ส่งไฟไปสั่งปลดล็อกกลอนประตู
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: MODULE 2 - RS-485 BUS -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-cyan-400">MODULE 2 : SERIAL BUS ARCHITECTURE</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">Differential Signal</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">โครงข่ายบัสสื่อสาร RS-485 (Half-Duplex)[cite: 1, 2]</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="space-y-4">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <h4 class="text-sm font-bold text-cyan-400 mb-2">การส่งสัญญาณแบบผลต่างแรงดัน[cite: 2]</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              วัดผลต่างแรงดันระหว่างสายคู่บิดเกลียว <strong>(Va - Vb)</strong>[cite: 2] สามารถหักล้างสัญญาณรบกวนภายนอก (Common-Mode Noise) ได้ดีเยี่ยม[cite: 1] และเดินสายได้ระยะทางไกลสูงสุดถึง 1,200 เมตร[cite: 5]
+            </p>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <h4 class="text-sm font-bold text-amber-400 mb-2">กฎเหล็กการเดินสาย Daisy Chain[cite: 2, 3]</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              ต้องต่อพ่วงอุปกรณ์จาก Master วิ่งไปหา Slave ตัวที่ 1, 2, 3 เรียงเป็นแถวแบบ Daisy Chain[cite: 2, 3] <strong>ห้ามต่อแยกกิ่งรูปดาว (Star)</strong> เพราะจะทำให้เกิดคลื่นสะท้อนกวนข้อมูล[cite: 2, 3]
+            </p>
+          </div>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+          <h4 class="text-sm font-bold text-indigo-400">หน้าที่ของตัวต้านทาน 120Ω ปิดท้ายบัส[cite: 3]</h4>
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs text-slate-300">
+            <p>
+              ติดตั้งที่ <strong>หัวและท้ายสุดของสายบัส</strong> เพื่อทำหน้าที่ Termination[cite: 3] ดูดซับพลังงานสัญญาณไม่ให้สะท้อนกลับ (Signal Reflection)[cite: 3]
+            </p>
+          </div>
+          <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs text-slate-300">
+            <span class="text-rose-400 font-bold block mb-1">ผลกระทบของ Baud Rate Mismatch:[cite: 1]</span>
+            หาก Master และ Slave ตั้งความเร็วไม่ตรงกัน (เช่น 9600 vs 19200 bps) บนหน้าจอ Serial Monitor จะปรากฏแต่ข้อมูลขยะ (Frame Error)[cite: 1]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: MODULE 3 - CCTV & NETWORKING -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-emerald-400">MODULE 3 : IP SURVEILLANCE NETWORK</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">TCP/IP & PoE</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">ระบบกล้องวงจรปิด IP และการจ่ายไฟ PoE[cite: 1, 4]</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="text-xs font-mono text-emerald-400 font-bold">1. สายสัญญาณ & RJ45[cite: 1, 4]</div>
+          <h4 class="text-sm font-bold text-white">มาตรฐานสายแลน UTP[cite: 4]</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            เรียงสีตามมาตรฐาน T568B เข้าหัวต่อ RJ45 สำหรับเชื่อมต่อกล้อง IP เข้ากับ Switch PoE[cite: 1, 4]
+          </p>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="text-xs font-mono text-indigo-400 font-bold">2. ระบบจ่ายไฟ PoE[cite: 1, 4]</div>
+          <h4 class="text-sm font-bold text-white">Power over Ethernet[cite: 1, 4]</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            จ่ายแรงดันไฟ DC ไปบนสายแลนคู่เดียวกับการส่งข้อมูล ทำให้ไม่ต้องเดินสายไฟ 220V หรืออแดปเตอร์แยกต่างหากที่ตัวกล้อง[cite: 4]
+          </p>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="text-xs font-mono text-cyan-400 font-bold">3. การตรวจเช็คสาย[cite: 1]</div>
+          <h4 class="text-sm font-bold text-white">คำสั่ง Ping (ICMP)[cite: 1]</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            ทดสอบการนำกระแสสัญญาณและความต่อเนื่องของสายแลน และตรวจเช็คสถานะการออนไลน์ของกล้องก่อนขึ้นบันทึกภาพ[cite: 1]
+          </p>
+        </div>
+      </div>
+      <div class="bg-rose-500/10 border border-rose-500/30 p-4 rounded-xl">
+        <h4 class="text-xs font-bold text-rose-400 mb-1">ข้อควรระวังสำคัญ: ปัญหา IP Conflict (หมายเลขไอพีชนกัน)</h4>
+        <p class="text-xs text-slate-300">
+          หากตั้งค่า IP ของกล้องซ้ำกับเครื่องอื่นในวงแลน สวิตช์เครือข่ายจะสับสนตาราง MAC Address ส่งผลให้ภาพหลุด ดับ หรือติดๆ ดับๆ ตลอดเวลา
+        </p>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: MODULE 3 - ONVIF & RTSP -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-emerald-400">MODULE 3 : VIDEO PROTOCOLS</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">Open Standards</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">การรวมภาพข้ามยี่ห้อด้วย ONVIF และ RTSP[cite: 7]</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+          <h4 class="text-sm font-bold text-cyan-400 flex items-center gap-2">
+            <span>🌐</span> มาตรฐานเปิด ONVIF (Profile S)[cite: 7]
+          </h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            ช่วยให้กล้อง IP และเครื่องบันทึก NVR ต่างค่ายสามารถค้นหากันเจอในวงแลนอัตโนมัติผ่านพอร์ต <strong>UDP 3702 (WS-Discovery)</strong> โดยไม่ต้องพึ่งพาซอฟต์แวร์เฉพาะยี่ห้อ[cite: 7]
+          </p>
+        </div>
+        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+          <h4 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+            <span>▶️</span> โปรโตคอล RTSP (Real-Time Streaming)[cite: 7]
+          </h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            โปรโตคอลมาตรฐานสำหรับดึงสตรีมวิดีโอสดผ่าน <strong>พอร์ต 554</strong> ใช้สำหรับส่งต่อภาพไปยังเซิร์ฟเวอร์ AI หรือระบบ VMS[cite: 1, 7]
+          </p>
+        </div>
+      </div>
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 mono text-xs space-y-2">
+        <div class="text-indigo-400 font-bold">โครงสร้าง RTSP Stream URL ที่ช่างต้องรู้จัก:[cite: 7]</div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-emerald-400">
+          rtsp://admin:12345@192.168.1.10:554/live/ch0[cite: 7]
+        </div>
+        <div class="text-[11px] text-slate-400">
+          ขั้นตอน Handshake: OPTIONS ➔ DESCRIBE ➔ SETUP ➔ PLAY[cite: 7]
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: MODULE 4 - AI & MQTT -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-amber-400">MODULE 4 : SMART EVENT LINKAGE</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">IoT & AI</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">กล้อง Edge AI และการสั่งงานข้ามระบบผ่าน MQTT[cite: 1, 6]</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="space-y-4">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <h4 class="text-sm font-bold text-indigo-400 mb-2">กล้องตรวจจับอัจฉริยะ (Edge AI)[cite: 1]</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              ประมวลผลวิเคราะห์ภาพภายในตัวกล้อง เช่น การจดจำใบหน้า (Face Recognition) และการอ่านป้ายทะเบียน (LPR) โดยไม่ต้องส่งไฟล์วิดีโอขนาดใหญ่ไปรันบนคลาวด์[cite: 1]
+            </p>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <h4 class="text-sm font-bold text-emerald-400 mb-2">โปรโตคอล MQTT (Publish / Subscribe)[cite: 6]</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              สถาปัตยกรรมส่งข้อความน้ำหนักเบา กินแบนด์วิธต่ำ เมื่อเกิดเหตุการณ์ กล้องจะ Publish ข้อความไปยัง Broker เพื่อสั่งการอุปกรณ์อื่นในระบบพร้อมกันทันที[cite: 6]
+            </p>
+          </div>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div class="text-xs font-mono text-indigo-400 font-bold mb-2">ตัวอย่าง JSON Message Payload:</div>
+          <pre class="bg-slate-950 p-3 rounded-lg border border-slate-800 mono text-[11px] text-emerald-400 overflow-x-auto">
+{
+  "device": "Gate-AI-Camera",
+  "event": "FACE_RECOGNITION",
+  "name": "Somchai (Staff)",
+  "confidence": 98.5,
+  "action": "UNLOCK_DOOR"
+}</pre>
+          <div class="text-[11px] text-slate-400 mt-2">
+            ข้อมูลแบบคู่คีย์-ค่า (Key-Value) เป็นมาตรฐานสากลที่อุปกรณ์ IoT ทุกระบบเข้าใจตรงกัน
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: MODULE 4 - FAIL-SAFE & LIFE SAFETY -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-amber-400">MODULE 4 : LIFE SAFETY INTERLOCK</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">NFPA Standards[cite: 1]</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">มาตรฐานความปลอดภัยระบบล็อค และอินเตอร์ล็อกหนีไฟ[cite: 1]</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+          <div class="text-xs font-mono text-emerald-400 font-bold">มาตรฐานประตูหนีไฟ</div>
+          <h4 class="text-lg font-bold text-white">ระบบ Fail-Safe (ตัดไฟแล้วปลดล็อก)[cite: 1]</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            กลอนแม่เหล็กไฟฟ้า (Magnetic Lock) ต้องใช้ไฟเลี้ยงในการดูดล็อก[cite: 1] เมื่อเกิดเหตุไฟฟ้าดับ หรือสัญญาณเตือนเพลิงไหม้ดัง ระบบต้องตัดไฟเพื่อให้ประตูเปิดออกได้ทันที เพื่อความปลอดภัยในชีวิต[cite: 1]
+          </p>
+        </div>
+        <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 space-y-3">
+          <div class="text-xs font-mono text-amber-400 font-bold">มาตรฐานห้องมั่นคง</div>
+          <h4 class="text-lg font-bold text-white">ระบบ Fail-Secure (ตัดไฟแล้วยังล็อก)[cite: 1]</h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            กลอนสลักไฟฟ้าหรือกลอนดิจิทัลของห้องเซิร์ฟเวอร์หรือตู้เซฟ เมื่อไฟฟ้าดับ ประตูจะยังคงล็อกแน่นหนาเพื่อป้องกันการบุกรุก[cite: 1] (ต้องใช้กุญแจกลไกไขฉุกเฉิน)
+          </p>
+        </div>
+      </div>
+      <div class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl">
+        <h4 class="text-xs font-bold text-amber-400 mb-1">การต่อวงจรตัดไฟผ่านตู้ Fire Alarm (Fire Interlock Interface)[cite: 1]</h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          หน้าสัมผัสของตู้ดับเพลิงจะถูกต่อแบบ Normally Closed (NC) อนุกรมคั่นสายไฟเลี้ยงกลอนประตู เมื่อเกิดเหตุควันไฟ รีเลย์จะตัดวงจรไฟทันทีโดยไม่ต้องรอคอนเฟิร์ม[cite: 1]
+        </p>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: SUMMARY MATRIX -->
+    <section class="slide flex-col space-y-6 w-full">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <span class="text-xs font-mono text-indigo-400">SUMMARY : PROTOCOL MATRIX</span>
+        <span class="text-xs bg-slate-900 text-slate-400 px-2 py-1 rounded">Review</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white">ตารางสรุปเปรียบเทียบ 4 โปรโตคอลหลักในงานช่าง</h3>
+      <div class="overflow-x-auto bg-slate-900 rounded-xl border border-slate-800">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-950 border-b border-slate-800 text-slate-400 font-mono">
+            <tr>
+              <th class="p-3.5">โปรโตคอล</th>
+              <th class="p-3.5">สื่อกลาง / รูปแบบสัญญาณ</th>
+              <th class="p-3.5">อุปกรณ์หน้างานหลัก</th>
+              <th class="p-3.5">จุดเน้นการตรวจซ่อม</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="p-3.5 font-bold text-indigo-400">Wiegand[cite: 5]</td>
+              <td class="p-3.5">พัลส์ Active-LOW (D0/D1)[cite: 5]</td>
+              <td class="p-3.5">เครื่องอ่านบัตร RFID ➔ ตู้คอนโทรล[cite: 1, 5]</td>
+              <td class="p-3.5">เช็คสาย D0/D1 สลับขั้ว, Parity Error</td>
+            </tr>
+            <tr>
+              <td class="p-3.5 font-bold text-cyan-400">RS-485[cite: 2]</td>
+              <td class="p-3.5">แรงดันผลต่าง (Differential A/B)[cite: 2]</td>
+              <td class="p-3.5">บัสสแกนลายนิ้วมือ / กล้อง PTZ[cite: 1]</td>
+              <td class="p-3.5">ต่อ Daisy Chain[cite: 2, 3], ใส่ 120Ω[cite: 3], ตั้ง Baud Rate[cite: 1]</td>
+            </tr>
+            <tr>
+              <td class="p-3.5 font-bold text-emerald-400">TCP/IP & RTSP[cite: 1, 7]</td>
+              <td class="p-3.5">แพ็กเก็ตแลน RJ45 (Port 554)[cite: 1, 4, 7]</td>
+              <td class="p-3.5">กล้อง IP Camera ➔ เครื่อง NVR[cite: 1]</td>
+              <td class="p-3.5">เช็คสาย Ping[cite: 1], ป้องกัน IP ชนกัน, เช็ค ONVIF[cite: 7]</td>
+            </tr>
+            <tr>
+              <td class="p-3.5 font-bold text-amber-400">MQTT / JSON[cite: 6]</td>
+              <td class="p-3.5">ข้อความ Pub/Sub ผ่าน Broker[cite: 6]</td>
+              <td class="p-3.5">กล้อง AI ➔ รีเลย์ปลดล็อกประตู Fail-Safe[cite: 1]</td>
+              <td class="p-3.5">ความถูกต้องของ Topic และโครงสร้าง JSON</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: ACTION LAB INSTRUCTION -->
+    <section class="slide flex-col items-center text-center space-y-6">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-3xl text-emerald-400">
+        🚀
+      </div>
+      <h3 class="text-4xl font-extrabold text-white">เข้าสู่ขั้นตอนปฏิบัติการจริง (Hands-on Lab)</h3>
+      <p class="text-slate-400 max-w-xl text-sm leading-relaxed">
+        ให้นักเรียนทุกคนเปิดโปรแกรม <strong>SecurNet SimLab</strong> ทำการทดลองตามใบงาน และทำแบบทดสอบท้ายโมดูลให้ผ่านเกณฑ์
+      </p>
+      <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl max-w-md w-full text-left text-xs space-y-2">
+        <div class="font-bold text-indigo-400 mb-2">เป้าหมายสมรรถนะคาบนี้:</div>
+        <div class="flex items-center gap-2 text-slate-300">
+          <span class="text-emerald-400 font-bold">1.</span> จำลองการต่อสายและวิเคราะห์คลื่นสัญญาณครบ 4 โมดูล
+        </div>
+        <div class="flex items-center gap-2 text-slate-300">
+          <span class="text-emerald-400 font-bold">2.</span> ทำแบบทดสอบท้ายโมดูลให้ได้คะแนนอย่างน้อย <strong>4/5 ข้อ</strong>
+        </div>
+        <div class="flex items-center gap-2 text-slate-300">
+          <span class="text-emerald-400 font-bold">3.</span> บันทึกรูปผลลัพธ์ลงในใบงานปฏิบัติการส่งท้ายคาบ
+        </div>
+      </div>
+      <a href="index.html" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30 flex items-center gap-2">
+        <span>🖥️</span> เริ่มต้นปฏิบัติการบน SecurNet SimLab
+      </a>
+    </section>
+
+  </main>
+
+  <!-- Presentation Control Bar -->
+  <footer class="border-t border-slate-800 bg-slate-900/80 px-8 py-3 flex justify-between items-center z-50">
+    <div class="text-xs text-slate-500">
+      กดปุ่มลูกศร <strong>&larr; / &rarr;</strong> บนคีย์บอร์ดเพื่อเปลี่ยนสไลด์
+    </div>
+    <div class="flex space-x-2">
+      <button onclick="prevSlide()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
+        <span>&larr;</span> ย้อนกลับ
+      </button>
+      <button onclick="nextSlide()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-lg shadow-indigo-600/20">
+        ถัดไป <span>&rarr;</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Slide Controller JavaScript -->
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const indicator = document.getElementById('slide-indicator');
+
+    function updateSlide() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+      indicator.textContent = `สไลด์ ${currentSlide + 1} / ${slides.length}`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    // รองรับการกดปุ่มบนคีย์บอร์ด
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>
