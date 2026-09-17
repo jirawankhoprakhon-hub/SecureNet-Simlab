@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecurNet SimLab (Offline + Quiz Edition) - ปวช. ช่างอิเล็กทรอนิกส์</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .door-slide { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col select-none">
+
+  <!-- Header & Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-4 md:px-8 py-3 flex flex-wrap justify-between items-center gap-3">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-emerald-400 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+        ⚡
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-lg font-bold tracking-tight text-white">SecurNet <span class="text-indigo-400">SimLab</span></h1>
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">QUIZ & DUAL-PLAYER EDITION</span>
+        </div>
+        <p class="text-[11px] text-slate-400">วิชา อุปกรณ์อิเล็กทรอนิกส์ในระบบรักษาความปลอดภัย (20105-2025)</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+      <button onclick="switchTab('mod1')" id="tab-mod1" class="tab-btn px-3 py-1.5 rounded-lg font-semibold transition bg-indigo-600 text-white flex items-center gap-1.5">
+        <span>💳</span> 1. Wiegand สายสัญญาณ
+      </button>
+      <button onclick="switchTab('mod2')" id="tab-mod2" class="tab-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white flex items-center gap-1.5">
+        <span>🔌</span> 2. RS-485 บัสข้อมูล
+      </button>
+      <button onclick="switchTab('mod3')" id="tab-mod3" class="tab-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white flex items-center gap-1.5">
+        <span>📹</span> 3. CCTV เครือข่าย
+      </button>
+      <button onclick="switchTab('mod4')" id="tab-mod4" class="tab-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white flex items-center gap-1.5">
+        <span>🤖</span> 4. AI ควบคุมข้ามระบบ
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Work Area -->
+  <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
+
+    <!-- ========================================================== -->
+    <!-- MODULE 1: WIEGAND 26-BIT -->
+    <!-- ========================================================== -->
+    <div id="module-mod1" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Column: Controls & Offline Video -->
+      <section class="lg:col-span-4 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-2">
+            <h2 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> แผงทาบบัตร RFID จำลอง
+            </h2>
+            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">26-Bit Frame</span>
+          </div>
+
+          <!-- Virtual Card -->
+          <div class="w-full h-28 rounded-xl bg-gradient-to-br from-indigo-800 via-indigo-950 to-slate-950 p-4 border border-indigo-500/30 flex flex-col justify-between shadow-lg">
+            <div class="flex justify-between items-start">
+              <span class="text-[10px] mono text-indigo-300">RFID KEYCARD</span>
+              <div class="w-6 h-4 rounded border border-amber-400/50 bg-amber-400/20 flex items-center justify-center text-[7px] text-amber-300 mono">CHIP</div>
+            </div>
+            <div>
+              <div class="text-[9px] mono text-indigo-400">UID CARD CODE</div>
+              <div id="m1-card-preview" class="text-base font-bold mono text-white tracking-wider">FAC: 101 | ID: 02048</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Facility Code (0-255)</label>
+              <input type="number" id="m1-fac" value="101" min="0" max="255" oninput="updateM1Preview()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs mono text-center font-bold text-emerald-400">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Card Number (0-65535)</label>
+              <input type="number" id="m1-card" value="2048" min="0" max="65535" oninput="updateM1Preview()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs mono text-center font-bold text-cyan-400">
+            </div>
+          </div>
+
+          <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl">
+            <label class="flex items-center gap-2 text-xs text-amber-300 cursor-pointer">
+              <input type="checkbox" id="m1-swap" class="rounded bg-slate-900 border-slate-700 text-amber-500 w-4 h-4">
+              <span>สลับสายเขียว (D0) กับ สายขาว (D1)</span>
+            </label>
+          </div>
+
+          <button onclick="runM1Wiegand()" class="w-full bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30 active:scale-95 flex items-center justify-center gap-2">
+            <span>📲</span> แตะบัตรทาบเสมือน (Tap Card)
+          </button>
+        </div>
+
+        <!-- Offline Video Player Module 1 (Dual-Player) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-400 flex items-center gap-1.5"><span>🎬</span> วิดีโอ Offline: โมดูลที่ 1</span>
+            <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[10px]">
+              <button id="m1-vbtn-1" onclick="switchVideoPlayer('m1', 1)" class="px-2.5 py-1 rounded font-medium bg-indigo-600 text-white transition">ตอนที่ 1</button>
+              <button id="m1-vbtn-2" onclick="switchVideoPlayer('m1', 2)" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition">ตอนที่ 2</button>
+            </div>
+          </div>
+          <div class="aspect-video w-full rounded-xl overflow-hidden border border-slate-800 bg-black relative">
+            <video id="m1-video-1" src="assets/mod1_part1.mp4" controls preload="metadata" class="w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+            <video id="m1-video-2" src="assets/mod1_part2.mp4" controls preload="metadata" class="hidden w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+          </div>
+          <!-- Timestamps ตอนที่ 1 -->
+          <div id="m1-ts-1" class="grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m1-video-1', 10)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:10 สาย D0/D1/GND</button>
+            <button onclick="seekSpecificVideo('m1-video-1', 55)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:55 เข้ากล่องควบคุม</button>
+          </div>
+          <!-- Timestamps ตอนที่ 2 -->
+          <div id="m1-ts-2" class="hidden grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m1-video-2', 15)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:15 วัดคลื่น Active-LOW</button>
+            <button onclick="seekSpecificVideo('m1-video-2', 75)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 1:15 ถอดรหัส 26 บิต</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Canvas, Frame View & Quiz -->
+      <section class="lg:col-span-8 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-semibold text-emerald-400">รูปคลื่นสัญญาณพัลส์ (Scope Logic Waveform: 50µs Active-LOW)</span>
+            <span class="text-[10px] mono bg-slate-950 border border-slate-800 px-2 py-0.5 rounded text-slate-400">D0=เขียว | D1=ฟ้า</span>
+          </div>
+          <canvas id="m1-canvas" width="700" height="130" class="w-full bg-slate-950 rounded-xl border border-slate-800"></canvas>
+        </div>
+
+        <div id="m1-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl transition duration-300 space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Controller Frame Inspector</h3>
+            <span id="m1-status-pill" class="text-[10px] px-2 py-0.5 rounded font-mono bg-slate-800 text-slate-400">STANDBY</span>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl mono text-xs border border-slate-800 overflow-x-auto space-y-2">
+            <div class="text-slate-400 text-[11px]">ลำดับบิตที่รับได้ (26 Bits Stream):</div>
+            <div id="m1-raw-bits" class="text-base tracking-widest font-bold text-slate-500">-- พร้อมรับการทาบบัตร --</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-slate-300">
+              <div class="bg-slate-900 p-2 rounded">Even: <span id="m1-even-res" class="text-white font-bold">-</span></div>
+              <div class="bg-slate-900 p-2 rounded">Facility: <span id="m1-fac-res" class="text-emerald-400 font-bold">-</span></div>
+              <div class="bg-slate-900 p-2 rounded">Card ID: <span id="m1-card-res" class="text-cyan-400 font-bold">-</span></div>
+              <div class="bg-slate-900 p-2 rounded">Odd: <span id="m1-odd-res" class="text-white font-bold">-</span></div>
+            </div>
+          </div>
+          <div id="m1-diag-msg" class="text-xs text-slate-400">💡 กดปุ่มแตะบัตรจำลองเพื่อเริ่มวิเคราะห์สัญญาณ</div>
+        </div>
+
+        <!-- Interactive Quiz Section Module 1 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📝</span>
+              <h3 class="text-sm font-bold text-indigo-400">แบบทดสอบท้ายโมดูลที่ 1: Wiegand 26-bit Protocol (5 ข้อ)</h3>
+            </div>
+            <span id="quiz-score-mod1" class="text-xs font-mono px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400">คะแนน: -/5</span>
+          </div>
+          <div id="quiz-container-mod1" class="space-y-4"></div>
+          <div class="flex items-center justify-between pt-2">
+            <button onclick="submitQuiz('mod1')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg shadow-indigo-600/30">
+              ส่งคำตอบและตรวจผลสอบ
+            </button>
+            <button onclick="resetQuiz('mod1')" class="text-xs text-slate-400 hover:text-white transition">
+              ทำแบบทดสอบใหม่
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MODULE 2: RS-485 MULTI-DROP BUS -->
+    <!-- ========================================================== -->
+    <div id="module-mod2" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Column: Controls & Offline Video -->
+      <section class="lg:col-span-4 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div class="border-b border-slate-800 pb-3 mb-2">
+            <h2 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> แผงควบคุมบัส RS-485
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-1">สายคู่บิดเกลียว Differential Half-Duplex</p>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">เลือก Slave Address ที่จะถาม (Polling)</label>
+            <select id="m2-target" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs mono">
+              <option value="1">Node 01: เครื่องสแกนลายนิ้วมือ</option>
+              <option value="2">Node 02: เครื่องอ่านบัตรประตูฉุกเฉิน</option>
+              <option value="99">Node 99: อุปกรณ์ที่สายขาด (No Device)</option>
+            </select>
+          </div>
+
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+            <span class="text-xs font-bold text-amber-400 block">จำลองปัญหาทางกายภาพ:</span>
+            <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+              <input type="checkbox" id="m2-baud-err" class="rounded bg-slate-900 border-slate-700 text-indigo-500">
+              <span>Baud Rate Mismatch (Master 9600 vs Slave 19200)</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+              <input type="checkbox" id="m2-no-term" class="rounded bg-slate-900 border-slate-700 text-indigo-500">
+              <span>ไม่ต่อตัวต้านทาน 120Ω ปลายสาย (Line Reflection)</span>
+            </label>
+          </div>
+
+          <button onclick="runM2RS485()" class="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-600/30 active:scale-95 flex items-center justify-center gap-2">
+            <span>📡</span> ส่งคำสั่ง Polling Request
+          </button>
+        </div>
+
+        <!-- Offline Video Player Module 2 (Dual-Player) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-400 flex items-center gap-1.5"><span>🎬</span> วิดีโอ Offline: โมดูลที่ 2</span>
+            <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[10px]">
+              <button id="m2-vbtn-1" onclick="switchVideoPlayer('m2', 1)" class="px-2.5 py-1 rounded font-medium bg-indigo-600 text-white transition">ตอนที่ 1</button>
+              <button id="m2-vbtn-2" onclick="switchVideoPlayer('m2', 2)" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition">ตอนที่ 2</button>
+            </div>
+          </div>
+          <div class="aspect-video w-full rounded-xl overflow-hidden border border-slate-800 bg-black relative">
+            <video id="m2-video-1" src="assets/mod2_part1.mp4" controls preload="metadata" class="w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+            <video id="m2-video-2" src="assets/mod2_part2.mp4" controls preload="metadata" class="hidden w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+          </div>
+          <!-- Timestamps ตอนที่ 1 -->
+          <div id="m2-ts-1" class="grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m2-video-1', 10)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:10 ต่อสาย A/B ขนาน</button>
+            <button onclick="seekSpecificVideo('m2-video-1', 60)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 1:00 ตั้ง Baud Rate</button>
+          </div>
+          <!-- Timestamps ตอนที่ 2 -->
+          <div id="m2-ts-2" class="hidden grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m2-video-2', 20)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:20 แรงดัน Va - Vb</button>
+            <button onclick="seekSpecificVideo('m2-video-2', 80)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 1:20 ใส่ตัวต้านทาน 120Ω</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Canvas, Terminal & Quiz -->
+      <section class="lg:col-span-8 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-semibold text-cyan-400">แรงดันผลต่างสายบัส (Differential: Va - Vb) ขจัด Noise</span>
+            <span class="text-[10px] mono bg-slate-950 border border-slate-800 px-2 py-0.5 rounded text-slate-400">สาย A=ส้ม | สาย B=น้ำเงิน</span>
+          </div>
+          <canvas id="m2-canvas" width="700" height="130" class="w-full bg-slate-950 rounded-xl border border-slate-800"></canvas>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-2">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">RS-485 Serial Bus Terminal</h3>
+            <button onclick="clearM2Terminal()" class="text-[10px] text-slate-500 hover:text-slate-300">ล้างข้อความ</button>
+          </div>
+          <div id="m2-log" class="bg-slate-950 p-3.5 rounded-xl mono text-xs h-36 overflow-y-auto border border-slate-800 space-y-1.5 text-slate-300">
+            <div class="text-slate-600">// ระบบ Standby พร้อมมอนิเตอร์แพ็กเก็ต Polling...</div>
+          </div>
+        </div>
+
+        <!-- Interactive Quiz Section Module 2 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📝</span>
+              <h3 class="text-sm font-bold text-indigo-400">แบบทดสอบท้ายโมดูลที่ 2: RS-485 Bus & Polling (5 ข้อ)</h3>
+            </div>
+            <span id="quiz-score-mod2" class="text-xs font-mono px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400">คะแนน: -/5</span>
+          </div>
+          <div id="quiz-container-mod2" class="space-y-4"></div>
+          <div class="flex items-center justify-between pt-2">
+            <button onclick="submitQuiz('mod2')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg shadow-indigo-600/30">
+              ส่งคำตอบและตรวจผลสอบ
+            </button>
+            <button onclick="resetQuiz('mod2')" class="text-xs text-slate-400 hover:text-white transition">
+              ทำแบบทดสอบใหม่
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MODULE 3: TCP/IP & CCTV RTSP -->
+    <!-- ========================================================== -->
+    <div id="module-mod3" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Column: Controls & Offline Video -->
+      <section class="lg:col-span-4 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div class="border-b border-slate-800 pb-3 mb-2">
+            <h2 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> แผงควบคุมระบบกล้อง IP และ NVR
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-1">ทดสอบระบบเครือข่ายกล้องวงจรปิด</p>
+          </div>
+
+          <div class="space-y-2.5">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">NVR IP Server</label>
+              <input type="text" id="m3-nvr" value="192.168.1.100" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs mono">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">IP Camera 01 (หน้าประตู)</label>
+              <input type="text" id="m3-c1" value="192.168.1.10" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs mono">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">IP Camera 02 (ลานจอดรถ)</label>
+              <input type="text" id="m3-c2" value="192.168.1.11" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs mono">
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <label class="flex items-center gap-2 text-xs text-rose-400 cursor-pointer">
+              <input type="checkbox" id="m3-conflict" onchange="toggleM3Conflict()" class="rounded bg-slate-900 border-slate-700 text-rose-500">
+              <span>จำลองตั้ง IP ชนกัน (IP Conflict: 192.168.1.10)</span>
+            </label>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <button onclick="runM3Ping()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-xl text-xs transition">
+              1. ทดสอบ Ping สายสัญญาณ (ICMP)
+            </button>
+            <button onclick="runM3Onvif()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl text-xs transition">
+              2. ค้นหากล้องข้ามยี่ห้อ (ONVIF WS-Discovery)
+            </button>
+            <button onclick="runM3RTSP()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl text-xs transition">
+              3. ดึงสตรีมภาพสด (RTSP Handshake)
+            </button>
+          </div>
+        </div>
+
+        <!-- Offline Video Player Module 3 (Dual-Player) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-400 flex items-center gap-1.5"><span>🎬</span> วิดีโอ Offline: โมดูลที่ 3</span>
+            <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[10px]">
+              <button id="m3-vbtn-1" onclick="switchVideoPlayer('m3', 1)" class="px-2.5 py-1 rounded font-medium bg-indigo-600 text-white transition">ตอนที่ 1</button>
+              <button id="m3-vbtn-2" onclick="switchVideoPlayer('m3', 2)" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition">ตอนที่ 2</button>
+            </div>
+          </div>
+          <div class="aspect-video w-full rounded-xl overflow-hidden border border-slate-800 bg-black relative">
+            <video id="m3-video-1" src="assets/mod3_part1.mp4" controls preload="metadata" class="w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+            <video id="m3-video-2" src="assets/mod3_part2.mp4" controls preload="metadata" class="hidden w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+          </div>
+          <!-- Timestamps ตอนที่ 1 -->
+          <div id="m3-ts-1" class="grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m3-video-1', 15)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:15 เข้าหัวสาย RJ45</button>
+            <button onclick="seekSpecificVideo('m3-video-1', 65)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 1:05 ฟิกซ์ IP Address</button>
+          </div>
+          <!-- Timestamps ตอนที่ 2 -->
+          <div id="m3-ts-2" class="hidden grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m3-video-2', 20)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:20 ค้นหา ONVIF กล้อง</button>
+            <button onclick="seekSpecificVideo('m3-video-2', 75)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 1:15 ดึง RTSP Stream</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Video Wall, Packet Log & Quiz -->
+      <section class="lg:col-span-8 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-xs font-semibold text-slate-300">มอนิเตอร์ศูนย์ควบคุมภาพกล้อง (NVR Display)</span>
+            <span id="m3-status" class="text-[10px] mono text-slate-500">STANDBY - WAITING RTSP</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div id="m3-cam1-box" class="aspect-video bg-slate-950 border-2 border-slate-800 rounded-xl relative overflow-hidden flex items-center justify-center">
+              <div id="m3-c1-nosignal" class="text-center text-slate-600 mono text-xs">CAM 01: NO SIGNAL</div>
+              <div id="m3-c1-live" class="hidden absolute inset-0 bg-slate-900 flex flex-col justify-between p-3 border-2 border-emerald-500/50">
+                <span class="text-[11px] font-bold text-emerald-400 mono">● LIVE | CAM 01 (1080P/25FPS)</span>
+                <div class="w-20 h-20 border border-emerald-400/50 mx-auto rounded flex items-center justify-center text-[9px] text-emerald-300 mono">[AI FACE]</div>
+                <span class="text-[9px] mono text-slate-400">RTSP: rtsp://192.168.1.10:554/live</span>
+              </div>
+            </div>
+            <div id="m3-cam2-box" class="aspect-video bg-slate-950 border-2 border-slate-800 rounded-xl relative overflow-hidden flex items-center justify-center">
+              <div id="m3-c2-nosignal" class="text-center text-slate-600 mono text-xs">CAM 02: NO SIGNAL</div>
+              <div id="m3-c2-live" class="hidden absolute inset-0 bg-slate-900 flex flex-col justify-between p-3 border-2 border-emerald-500/50">
+                <span class="text-[11px] font-bold text-emerald-400 mono">● LIVE | CAM 02 (1080P/25FPS)</span>
+                <div class="w-24 h-14 border border-cyan-400/50 mx-auto rounded flex items-center justify-center text-[9px] text-cyan-300 mono">[AI LPR]</div>
+                <span class="text-[9px] mono text-slate-400">RTSP: rtsp://192.168.1.11:554/live</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-semibold text-emerald-400">Network Packet Inspector (Wireshark-like Log)</span>
+          </div>
+          <div id="m3-netlog" class="bg-slate-950 border border-slate-800 rounded-xl p-3 h-28 overflow-y-auto mono text-xs space-y-1 text-slate-300">
+            <div class="text-slate-600">// กดเลือกขั้นตอนเพื่อทดสอบแพ็กเก็ตเครือข่าย...</div>
+          </div>
+        </div>
+
+        <!-- Interactive Quiz Section Module 3 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📝</span>
+              <h3 class="text-sm font-bold text-indigo-400">แบบทดสอบท้ายโมดูลที่ 3: TCP/IP, ONVIF & RTSP (5 ข้อ)</h3>
+            </div>
+            <span id="quiz-score-mod3" class="text-xs font-mono px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400">คะแนน: -/5</span>
+          </div>
+          <div id="quiz-container-mod3" class="space-y-4"></div>
+          <div class="flex items-center justify-between pt-2">
+            <button onclick="submitQuiz('mod3')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg shadow-indigo-600/30">
+              ส่งคำตอบและตรวจผลสอบ
+            </button>
+            <button onclick="resetQuiz('mod3')" class="text-xs text-slate-400 hover:text-white transition">
+              ทำแบบทดสอบใหม่
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MODULE 4: AI & EVENT-ACTION LINKAGE -->
+    <!-- ========================================================== -->
+    <div id="module-mod4" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Column: Controls & Offline Video -->
+      <section class="lg:col-span-4 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div class="border-b border-slate-800 pb-3 mb-2">
+            <h2 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> กล้อง Edge AI & ตัวตรวจจับ
+            </h2>
+            <p class="text-[11px] text-slate-400 mt-1">ส่งคำสั่งข้ามระบบผ่านโปรโตคอล IoT (MQTT)</p>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">เลือกเหตุการณ์ที่ตรวจจับได้:</label>
+            <select id="m4-scenario" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs">
+              <option value="face_ok">👤 ตรวจพบใบหน้า: บุคลากรที่ลงทะเบียน (Access Granted)</option>
+              <option value="intruder">🚨 ตรวจพบคนบุกรุกปีนข้ามรั้ว (Intrusion Alert)</option>
+              <option value="fire">🔥 ตรวจพบควันไฟฉุกเฉิน (Fire Interlock Trigger)</option>
+            </select>
+          </div>
+
+          <div class="bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-xs mono text-indigo-300">
+            MQTT Topic: security/building/ai_events
+          </div>
+
+          <button onclick="runM4Trigger()" class="w-full bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-600/30 active:scale-95 flex items-center justify-center gap-2">
+            <span>⚡</span> ส่งข้อมูลแจ้งเตือน (Publish Event)
+          </button>
+        </div>
+
+        <!-- Offline Video Player Module 4 (Dual-Player) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-400 flex items-center gap-1.5"><span>🎬</span> วิดีโอ Offline: โมดูลที่ 4</span>
+            <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[10px]">
+              <button id="m4-vbtn-1" onclick="switchVideoPlayer('m4', 1)" class="px-2.5 py-1 rounded font-medium bg-indigo-600 text-white transition">ตอนที่ 1</button>
+              <button id="m4-vbtn-2" onclick="switchVideoPlayer('m4', 2)" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition">ตอนที่ 2</button>
+            </div>
+          </div>
+          <div class="aspect-video w-full rounded-xl overflow-hidden border border-slate-800 bg-black relative">
+            <video id="m4-video-1" src="assets/mod4_part1.mp4" controls preload="metadata" class="w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+            <video id="m4-video-2" src="assets/mod4_part2.mp4" controls preload="metadata" class="hidden w-full h-full object-contain">
+              เบราว์เซอร์ไม่รองรับ HTML5 Video
+            </video>
+          </div>
+          <!-- Timestamps ตอนที่ 1 -->
+          <div id="m4-ts-1" class="grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m4-video-1', 10)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:10 กล้อง Edge AI</button>
+            <button onclick="seekSpecificVideo('m4-video-1', 60)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 1:00 โครงสร้าง JSON</button>
+          </div>
+          <!-- Timestamps ตอนที่ 2 -->
+          <div id="m4-ts-2" class="hidden grid grid-cols-2 gap-1.5 mt-2.5">
+            <button onclick="seekSpecificVideo('m4-video-2', 20)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 0:20 รีเลย์ Fail-Safe</button>
+            <button onclick="seekSpecificVideo('m4-video-2', 85)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[10px] py-1 px-2 rounded text-left mono text-slate-300">⏱️ 1:25 ตัดวงจรหนีไฟ</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Hardware Actions, JSON Viewer & Quiz -->
+      <section class="lg:col-span-8 space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div class="text-xs font-semibold text-slate-300 mb-4">การตอบสนองของแอคทูเอเตอร์หน้างาน (Actuators Response)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Sliding Door -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col items-center">
+              <span class="text-[11px] text-slate-400 mb-2">กลอนแม่เหล็กประตูนิรภัย</span>
+              <div class="w-28 h-28 bg-slate-900 border-2 border-slate-700 rounded relative overflow-hidden flex justify-between p-1 mb-2">
+                <div id="door-left" class="door-slide w-12 h-full bg-slate-800 border border-slate-600 flex items-center justify-end pr-1"><div class="w-1.5 h-6 bg-slate-400 rounded-full"></div></div>
+                <div id="door-right" class="door-slide w-12 h-full bg-slate-800 border border-slate-600 flex items-center justify-start pl-1"><div class="w-1.5 h-6 bg-slate-400 rounded-full"></div></div>
+              </div>
+              <span id="door-status" class="text-xs font-bold text-rose-400">🔒 LOCKED (ปิดล็อก)</span>
+              <span class="text-[9px] text-slate-500 mt-0.5">Fail-Safe 12V Active</span>
+            </div>
+
+            <!-- Siren -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col items-center justify-between">
+              <span class="text-[11px] text-slate-400">ไซเรนและสัญญาณไฟ</span>
+              <div id="siren-icon" class="w-14 h-14 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-xl my-auto transition-all">🚨</div>
+              <div>
+                <div id="siren-status" class="text-xs font-bold text-slate-500">STANDBY (ปกติ)</div>
+                <div class="text-[9px] text-slate-500 text-center mt-0.5">Relay 12V 85dB</div>
+              </div>
+            </div>
+
+            <!-- Fire Interlock -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col items-center justify-between">
+              <span class="text-[11px] text-slate-400">อินเตอร์ล็อกแจ้งเหตุเพลิงไหม้</span>
+              <div id="fire-icon" class="w-14 h-14 rounded-xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-xl my-auto transition-all">🧯</div>
+              <div>
+                <div id="fire-status" class="text-xs font-bold text-slate-500">NORMAL (พร้อมใช้งาน)</div>
+                <div class="text-[9px] text-slate-500 text-center mt-0.5">NFPA Fail-Safe Cut</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-semibold text-emerald-400">MQTT JSON Message Payload (ส่งจากกล้อง AI)</span>
+            <span class="text-[10px] mono text-slate-500">Topic: security/building/ai_events</span>
+          </div>
+          <pre id="m4-json" class="bg-slate-950 border border-slate-800 rounded-xl p-3 mono text-xs text-emerald-400 overflow-x-auto">// รอดักจับ Event Message ข้ามระบบ...</pre>
+        </div>
+
+        <!-- Interactive Quiz Section Module 4 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📝</span>
+              <h3 class="text-sm font-bold text-indigo-400">แบบทดสอบท้ายโมดูลที่ 4: AI & Event-Action Linkage (5 ข้อ)</h3>
+            </div>
+            <span id="quiz-score-mod4" class="text-xs font-mono px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400">คะแนน: -/5</span>
+          </div>
+          <div id="quiz-container-mod4" class="space-y-4"></div>
+          <div class="flex items-center justify-between pt-2">
+            <button onclick="submitQuiz('mod4')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-lg shadow-indigo-600/30">
+              ส่งคำตอบและตรวจผลสอบ
+            </button>
+            <button onclick="resetQuiz('mod4')" class="text-xs text-slate-400 hover:text-white transition">
+              ทำแบบทดสอบใหม่
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-900/40 px-6 py-2.5 text-center text-xs text-slate-500">
+    ชุดการเรียนรู้ระบบรักษาความปลอดภัย by อ.กุหลาบ | สาขาวิชาช่างอิเล็กทรอนิกส์
+  </footer>
+
+  <!-- Logic, Video Controller & Quiz Data Scripts -->
+  <script>
+    // ==========================================
+    // 1. SOUND EFFECTS (Web Audio API)
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq = 880, dur = 0.1, type = 'sine') {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + dur);
+      } catch(e) {}
+    }
+    function playRelay() { playBeep(240, 0.05, 'square'); }
+    function playAlarm() {
+      for(let i=0; i<3; i++) {
+        setTimeout(() => playBeep(980, 0.12, 'sawtooth'), i * 140);
+      }
+    }
+    function playFanfare() {
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playBeep(freq, 0.18, 'triangle'), idx * 120);
+      });
+    }
+
+    // ==========================================
+    // 2. TABS & DUAL-PLAYER TOGGLE (100% OFFLINE)
+    // ==========================================
+    function switchTab(id) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white');
+        btn.classList.add('text-slate-400');
+      });
+      document.getElementById('module-' + id).classList.remove('hidden');
+      const active = document.getElementById('tab-' + id);
+      active.classList.add('bg-indigo-600', 'text-white');
+      active.classList.remove('text-slate-400');
+
+      if (id === 'mod1') drawM1Grid();
+      if (id === 'mod2') drawM2Grid();
+    }
+
+    function switchVideoPlayer(mod, part) {
+      const v1 = document.getElementById(`${mod}-video-1`);
+      const v2 = document.getElementById(`${mod}-video-2`);
+      const b1 = document.getElementById(`${mod}-vbtn-1`);
+      const b2 = document.getElementById(`${mod}-vbtn-2`);
+      const ts1 = document.getElementById(`${mod}-ts-1`);
+      const ts2 = document.getElementById(`${mod}-ts-2`);
+
+      if (v1) v1.pause();
+      if (v2) v2.pause();
+
+      if (part === 1) {
+        if (v1) v1.classList.remove('hidden');
+        if (v2) v2.classList.add('hidden');
+        b1.className = "px-2.5 py-1 rounded font-medium bg-indigo-600 text-white transition";
+        b2.className = "px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition";
+        if (ts1) ts1.classList.remove('hidden');
+        if (ts2) ts2.classList.add('hidden');
+      } else {
+        if (v1) v1.classList.add('hidden');
+        if (v2) v2.classList.remove('hidden');
+        b2.className = "px-2.5 py-1 rounded font-medium bg-indigo-600 text-white transition";
+        b1.className = "px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition";
+        if (ts2) ts2.classList.remove('hidden');
+        if (ts1) ts1.classList.add('hidden');
+      }
+    }
+
+    function seekSpecificVideo(vidId, sec) {
+      const v = document.getElementById(vidId);
+      if (v) { 
+        v.currentTime = sec; 
+        v.play().catch(() => {}); 
+      }
+    }
+
+    // ==========================================
+    // 3. MODULE 1: WIEGAND SIMULATION
+    // ==========================================
+    const m1Canvas = document.getElementById('m1-canvas');
+    const m1Ctx = m1Canvas.getContext('2d');
+
+    function updateM1Preview() {
+      const f = document.getElementById('m1-fac').value.padStart(3, '0');
+      const c = document.getElementById('m1-card').value.padStart(5, '0');
+      document.getElementById('m1-card-preview').textContent = `FAC: ${f} | ID: ${c}`;
+    }
+
+    function drawM1Grid() {
+      m1Ctx.fillStyle = "#020617";
+      m1Ctx.fillRect(0, 0, m1Canvas.width, m1Canvas.height);
+      m1Ctx.strokeStyle = "#1e293b";
+      m1Ctx.lineWidth = 1;
+      for (let x = 0; x < m1Canvas.width; x += 30) {
+        m1Ctx.beginPath(); m1Ctx.moveTo(x, 0); m1Ctx.lineTo(x, m1Canvas.height); m1Ctx.stroke();
+      }
+      for (let y = 0; y < m1Canvas.height; y += 25) {
+        m1Ctx.beginPath(); m1Ctx.moveTo(0, y); m1Ctx.lineTo(m1Canvas.width, y); m1Ctx.stroke();
+      }
+    }
+
+    function runM1Wiegand() {
+      playBeep(1200, 0.12, 'sine');
+      const fac = parseInt(document.getElementById('m1-fac').value) || 0;
+      const card = parseInt(document.getElementById('m1-card').value) || 0;
+      const isSwapped = document.getElementById('m1-swap').checked;
+
+      const fBits = (fac & 0xFF).toString(2).padStart(8, '0');
+      const cBits = (card & 0xFFFF).toString(2).padStart(16, '0');
+      const data24 = fBits + cBits;
+
+      let eSum = 0;
+      for (let i = 0; i < 12; i++) if (data24[i] === '1') eSum++;
+      const evenBit = (eSum % 2 === 0) ? '0' : '1';
+
+      let oSum = 0;
+      for (let i = 12; i < 24; i++) if (data24[i] === '1') oSum++;
+      const oddBit = (oSum % 2 !== 0) ? '0' : '1';
+
+      const full26 = evenBit + data24 + oddBit;
+
+      drawM1Grid();
+      const step = m1Canvas.width / 28;
+      const y0 = 40, y1 = 95, drop = 22;
+      m1Ctx.lineWidth = 2;
+
+      // D0 (Green)
+      m1Ctx.strokeStyle = "#10b981";
+      m1Ctx.beginPath(); m1Ctx.moveTo(0, y0);
+      for(let i=0; i<26; i++) {
+        const x = (i + 1) * step;
+        let b = isSwapped ? (full26[i] === '0' ? '1' : '0') : full26[i];
+        m1Ctx.lineTo(x, y0);
+        if (b === '0') {
+          m1Ctx.lineTo(x, y0 + drop);
+          m1Ctx.lineTo(x + step * 0.4, y0 + drop);
+          m1Ctx.lineTo(x + step * 0.4, y0);
+        }
+      }
+      m1Ctx.lineTo(m1Canvas.width, y0);
+      m1Ctx.stroke();
+
+      // D1 (Cyan)
+      m1Ctx.strokeStyle = "#22d3ee";
+      m1Ctx.beginPath(); m1Ctx.moveTo(0, y1);
+      for(let i=0; i<26; i++) {
+        const x = (i + 1) * step;
+        let b = isSwapped ? (full26[i] === '0' ? '1' : '0') : full26[i];
+        m1Ctx.lineTo(x, y1);
+        if (b === '1') {
+          m1Ctx.lineTo(x, y1 + drop);
+          m1Ctx.lineTo(x + step * 0.4, y1 + drop);
+          m1Ctx.lineTo(x + step * 0.4, y1);
+        }
+      }
+      m1Ctx.lineTo(m1Canvas.width, y1);
+      m1Ctx.stroke();
+
+      const rawDiv = document.getElementById('m1-raw-bits');
+      const pill = document.getElementById('m1-status-pill');
+      const diag = document.getElementById('m1-diag-msg');
+
+      if (!isSwapped) {
+        rawDiv.innerHTML = `<span class="text-amber-400">${evenBit}</span> <span class="text-emerald-400">${fBits}</span> <span class="text-cyan-400">${cBits}</span> <span class="text-amber-400">${oddBit}</span>`;
+        document.getElementById('m1-even-res').textContent = evenBit;
+        document.getElementById('m1-fac-res').textContent = `${fac} (${fBits})`;
+        document.getElementById('m1-card-res').textContent = `${card} (${cBits})`;
+        document.getElementById('m1-odd-res').textContent = oddBit;
+        pill.textContent = "PARITY VALID";
+        pill.className = "text-[10px] px-2 py-0.5 rounded font-mono bg-emerald-500/20 text-emerald-300";
+        diag.innerHTML = `<span class="text-emerald-400 font-bold">✔ อนุมัติสิทธิ์ (ACCESS GRANTED)</span>: สายสัญญาณถูกต้อง รีเลย์สั่งเปิดกลอนประตู`;
+        setTimeout(playRelay, 180);
+      } else {
+        const inv = full26.split('').map(b => b === '0' ? '1' : '0').join('');
+        rawDiv.innerHTML = `<span class="text-rose-500">${inv}</span>`;
+        document.getElementById('m1-even-res').textContent = inv[0];
+        document.getElementById('m1-fac-res').textContent = "ERROR";
+        document.getElementById('m1-card-res').textContent = "ERROR";
+        document.getElementById('m1-odd-res').textContent = inv[25];
+        pill.textContent = "PARITY ERROR";
+        pill.className = "text-[10px] px-2 py-0.5 rounded font-mono bg-rose-500/20 text-rose-300";
+        diag.innerHTML = `<span class="text-rose-400 font-bold">✖ ปฏิเสธสิทธิ์ (PARITY FAILED)</span>: สาย D0/D1 สลับกัน ข้อมูลบิตกลับด้านทั้งหมด`;
+        setTimeout(() => playBeep(200, 0.25, 'sawtooth'), 150);
+      }
+    }
+
+    // ==========================================
+    // 4. MODULE 2: RS-485 SIMULATION
+    // ==========================================
+    const m2Canvas = document.getElementById('m2-canvas');
+    const m2Ctx = m2Canvas.getContext('2d');
+
+    function drawM2Grid() {
+      m2Ctx.fillStyle = "#020617";
+      m2Ctx.fillRect(0, 0, m2Canvas.width, m2Canvas.height);
+      m2Ctx.strokeStyle = "#1e293b";
+      m2Ctx.lineWidth = 1;
+      for (let x = 0; x < m2Canvas.width; x += 30) {
+        m2Ctx.beginPath(); m2Ctx.moveTo(x, 0); m2Ctx.lineTo(x, m2Canvas.height); m2Ctx.stroke();
+      }
+      for (let y = 0; y < m2Canvas.height; y += 25) {
+        m2Ctx.beginPath(); m2Ctx.moveTo(0, y); m2Ctx.lineTo(m2Canvas.width, y); m2Ctx.stroke();
+      }
+    }
+
+    function runM2RS485() {
+      playRelay();
+      const target = document.getElementById('m2-target').value;
+      const isMismatch = document.getElementById('m2-baud-err').checked;
+      const isNoTerm = document.getElementById('m2-no-term').checked;
+      const log = document.getElementById('m2-log');
+      const time = new Date().toLocaleTimeString();
+
+      drawM2Grid();
+      const yA = 45, yB = 85;
+      m2Ctx.lineWidth = 2;
+
+      // Line A (Orange)
+      m2Ctx.strokeStyle = "#fbbf24";
+      m2Ctx.beginPath(); m2Ctx.moveTo(0, yA);
+      for(let x=0; x<m2Canvas.width; x+=35) {
+        const noise = isNoTerm ? (Math.random() * 16 - 8) : 0;
+        m2Ctx.lineTo(x + 17, yA + (x % 70 === 0 ? 18 : -18) + noise);
+      }
+      m2Ctx.stroke();
+
+      // Line B (Blue)
+      m2Ctx.strokeStyle = "#60a5fa";
+      m2Ctx.beginPath(); m2Ctx.moveTo(0, yB);
+      for(let x=0; x<m2Canvas.width; x+=35) {
+        const noise = isNoTerm ? (Math.random() * 16 - 8) : 0;
+        m2Ctx.lineTo(x + 17, yB + (x % 70 === 0 ? -18 : 18) + noise);
+      }
+      m2Ctx.stroke();
+
+      log.innerHTML += `<div><span class="text-slate-500">[${time}]</span> <span class="text-indigo-400 font-bold">TX Master:</span> [Poll Node 0x0${target} | FC:03 CRC16]</div>`;
+
+      setTimeout(() => {
+        if (target === "99") {
+          log.innerHTML += `<div><span class="text-slate-500">[${time}]</span> <span class="text-amber-400">TIMEOUT:</span> ไม่มีสัญญาณตอบกลับจาก Node 99 (สายขาด / อุปกรณ์ไม่จ่ายไฟ)</div>`;
+          playBeep(300, 0.2, 'sawtooth');
+        } else if (isMismatch) {
+          log.innerHTML += `<div><span class="text-slate-500">[${time}]</span> <span class="text-rose-400 font-bold">RX Node 0x0${target}:</span> !x (Frame Error / Baud Rate Mismatch)</div>`;
+          playBeep(250, 0.2, 'sawtooth');
+        } else if (isNoTerm) {
+          log.innerHTML += `<div><span class="text-slate-500">[${time}]</span> <span class="text-amber-400 font-bold">RX Node 0x0${target}:</span> CRC_WARNING (สัญญาณสะท้อน Line Reflection เพราะลืมใส่ 120Ω)</div>`;
+        } else {
+          log.innerHTML += `<div><span class="text-slate-500">[${time}]</span> <span class="text-emerald-400 font-bold">RX Node 0x0${target}:</span> ACK 0x06 [Status: STANDBY, Doors Locked, CRC OK]</div>`;
+          playBeep(900, 0.08, 'sine');
+        }
+        log.scrollTop = log.scrollHeight;
+      }, 250);
+    }
+
+    function clearM2Terminal() {
+      document.getElementById('m2-log').innerHTML = '<div class="text-slate-600">// ล้างข้อมูลเรียบร้อย...</div>';
+    }
+
+    // ==========================================
+    // 5. MODULE 3: TCP/IP & CCTV RTSP
+    // ==========================================
+    function logM3(msg) {
+      const l = document.getElementById('m3-netlog');
+      l.innerHTML += `<div><span class="text-slate-500">[${new Date().toLocaleTimeString()}]</span> ${msg}</div>`;
+      l.scrollTop = l.scrollHeight;
+    }
+
+    function toggleM3Conflict() {
+      const chk = document.getElementById('m3-conflict').checked;
+      document.getElementById('m3-c2').value = chk ? document.getElementById('m3-c1').value : "192.168.1.11";
+    }
+
+    function runM3Ping() {
+      playRelay();
+      const nvr = document.getElementById('m3-nvr').value;
+      const c1 = document.getElementById('m3-c1').value;
+      const c2 = document.getElementById('m3-c2').value;
+
+      logM3(`<span class="text-indigo-400">PING from ${nvr} to ${c1}...</span>`);
+      if (c1 === c2) {
+        setTimeout(() => {
+          logM3(`<span class="text-rose-400 font-bold">✖ IP CONFLICT: กล้องทั้งสองตัวใช้ IP ${c1} ชนกัน!</span>`);
+          playBeep(200, 0.3, 'sawtooth');
+        }, 200);
+      } else {
+        setTimeout(() => {
+          logM3(`<span class="text-emerald-400">✔ 64 bytes from ${c1}: icmp_seq=1 ttl=64 time=1.1ms (เชื่อมต่อสำเร็จ)</span>`);
+          playBeep(1000, 0.08, 'sine');
+        }, 200);
+      }
+    }
+
+    function runM3Onvif() {
+      playRelay();
+      logM3(`<span class="text-cyan-400">ONVIF: Multicast Discovery -> 239.255.255.250:3702</span>`);
+      setTimeout(() => {
+        logM3(`<span class="text-emerald-400">✔ พบอุปกรณ์ Profile S: กล้องหน้าประตู (${document.getElementById('m3-c1').value}:80)</span>`);
+        logM3(`<span class="text-emerald-400">✔ พบอุปกรณ์ Profile S: กล้องลานจอดรถ (${document.getElementById('m3-c2').value}:80)</span>`);
+        playBeep(1100, 0.1, 'sine');
+      }, 350);
+    }
+
+    function runM3RTSP() {
+      playRelay();
+      const c1 = document.getElementById('m3-c1').value;
+      const c2 = document.getElementById('m3-c2').value;
+
+      if (c1 === c2) {
+        logM3(`<span class="text-rose-400 font-bold">✖ RTSP ERROR: ไม่สามารถเจรจาสตรีมได้เนื่องจาก IP ชนกัน</span>`);
+        playBeep(200, 0.3, 'sawtooth');
+        return;
+      }
+
+      logM3(`RTSP Handshake -> SETUP rtsp://${c1}:554/live Transport: RTP/UDP`);
+      logM3(`RTSP PLAY -> เริ่มสตรีมภาพวิดีโอเรียบร้อย`);
+
+      document.getElementById('m3-c1-nosignal').classList.add('hidden');
+      document.getElementById('m3-c1-live').classList.remove('hidden');
+      document.getElementById('m3-c2-nosignal').classList.add('hidden');
+      document.getElementById('m3-c2-live').classList.remove('hidden');
+      document.getElementById('m3-status').textContent = "ONLINE - 2 CHANNELS LIVE";
+      document.getElementById('m3-status').className = "text-[10px] mono text-emerald-400 font-bold";
+
+      playBeep(1400, 0.15, 'sine');
+    }
+
+    // ==========================================
+    // 6. MODULE 4: AI & EVENT-ACTION
+    // ==========================================
+    function runM4Trigger() {
+      const type = document.getElementById('m4-scenario').value;
+      const dL = document.getElementById('door-left');
+      const dR = document.getElementById('door-right');
+      const dStatus = document.getElementById('door-status');
+      const sIcon = document.getElementById('siren-icon');
+      const sStatus = document.getElementById('siren-status');
+      const fIcon = document.getElementById('fire-icon');
+      const fStatus = document.getElementById('fire-status');
+      const jsonView = document.getElementById('m4-json');
+
+      let payload = {};
+
+      if (type === 'face_ok') {
+        playRelay();
+        playBeep(1200, 0.12, 'sine');
+
+        payload = {
+          protocol: "MQTT",
+          topic: "security/building/ai_events",
+          timestamp: new Date().toISOString(),
+          event: "FACE_VERIFIED",
+          user_name: "นายสมชาย (ครู/นักเรียนที่ลงทะเบียน)",
+          confidence: "98.5%",
+          action_command: "PULSE_UNLOCK_DOOR_5S"
+        };
+
+        dL.style.transform = "translateX(-28px)";
+        dR.style.transform = "translateX(28px)";
+        dStatus.textContent = "🔓 UNLOCKED (เปิดประตู)";
+        dStatus.className = "text-xs font-bold text-emerald-400";
+
+        setTimeout(() => {
+          dL.style.transform = "translateX(0)";
+          dR.style.transform = "translateX(0)";
+          dStatus.textContent = "🔒 LOCKED (ปิดล็อก)";
+          dStatus.className = "text-xs font-bold text-rose-400";
+          playRelay();
+        }, 4000);
+
+      } else if (type === 'intruder') {
+        playAlarm();
+
+        payload = {
+          protocol: "MQTT",
+          topic: "security/building/ai_events",
+          timestamp: new Date().toISOString(),
+          event: "PERIMETER_INTRUSION",
+          hazard_level: "HIGH",
+          location: "Zone 02: กำแพงทิศเหนือ",
+          action_command: "TRIGGER_STROBE_SIREN"
+        };
+
+        sIcon.className = "w-14 h-14 rounded-full bg-rose-600 border-2 border-rose-400 flex items-center justify-center text-xl animate-ping my-auto";
+        sStatus.textContent = "🚨 SIREN ACTIVE!";
+        sStatus.className = "text-xs font-bold text-rose-400";
+
+        setTimeout(() => {
+          sIcon.className = "w-14 h-14 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-xl my-auto";
+          sStatus.textContent = "STANDBY (ปกติ)";
+          sStatus.className = "text-xs font-bold text-slate-500";
+        }, 5000);
+
+      } else if (type === 'fire') {
+        playAlarm();
+
+        payload = {
+          protocol: "MQTT",
+          topic: "safety/fire_alarm/system",
+          timestamp: new Date().toISOString(),
+          event: "SMOKE_FIRE_DETECTED",
+          hazard_level: "CRITICAL",
+          action_command: "NFPA_FAIL_SAFE_EMERGENCY_UNLOCK"
+        };
+
+        dL.style.transform = "translateX(-28px)";
+        dR.style.transform = "translateX(28px)";
+        dStatus.textContent = "⚠️ FAIL-SAFE OPEN (ปลดล็อกหนีไฟ)";
+        dStatus.className = "text-xs font-bold text-amber-400";
+
+        fIcon.className = "w-14 h-14 rounded-xl bg-amber-600 border-2 border-amber-400 flex items-center justify-center text-xl animate-pulse my-auto";
+        fStatus.textContent = "🔥 FIRE EVACUATION";
+        fStatus.className = "text-xs font-bold text-amber-400";
+      }
+
+      jsonView.textContent = JSON.stringify(payload, null, 2);
+    }
+
+    // ==========================================
+    // 7. INTERACTIVE QUIZ ENGINE & QUESTIONS
+    // ==========================================
+    const quizData = {
+      mod1: [
+        {
+          q: "1. สายสัญญาณคู่หลักที่ใช้ส่งรหัสบิตของโปรโตคอล Wiegand คือข้อใด?",
+          options: ["RXD และ TXD", "DATA0 (เขียว) และ DATA1 (ขาว)", "CAN_H และ CAN_L", "A(+) และ B(-)"],
+          answer: 1,
+          exp: "Wiegand ใช้สาย DATA0 สำหรับพัลส์บิต 0 และ DATA1 สำหรับพัลส์บิต 1 โดยปกติเป็นสายสีเขียวและขาว"
+        },
+        {
+          q: "2. พัลส์สัญญาณดิจิทัลของโปรโตคอล Wiegand ในสภาวะปกติ (Idle) และขณะส่งบิต มีระดับแรงดันอย่างไร?",
+          options: ["ปกติเป็น 0V เมื่อส่งบิตจะขึ้นเป็น +5V", "ปกติเป็น +5V เมื่อส่งบิตจะตกลงเป็น 0V (Active-LOW)", "สลับไปมาระหว่าง +12V และ -12V", "แรงดันคงที่ 3.3V ตลอดเวลา"],
+          answer: 1,
+          exp: "Wiegand ทำงานแบบ Active-LOW สภาวะปกติแช่ที่ High (+5V) เมื่อส่งบิตจะดึงลง 0V กว้างประมาณ 50-100 µs"
+        },
+        {
+          q: "3. โครงสร้างข้อมูลแบบมาตรฐาน Wiegand 26-bit จัดสรรจำนวนบิตสำหรับ Card ID (หมายเลขบัตร) ไว้กี่บิต?",
+          options: ["8 บิต (0-255)", "12 บิต (0-4095)", "16 บิต (0-65535)", "24 บิต"],
+          answer: 2,
+          exp: "โครงสร้าง 26 บิต ประกอบด้วย Even Parity (1 บิต) + Facility Code (8 บิต) + Card ID (16 บิต) + Odd Parity (1 บิต)"
+        },
+        {
+          q: "4. หากช่างติดตั้งต่อสาย DATA0 และ DATA1 สลับกันที่ตู้ Access Controller จะเกิดอาการใด?",
+          options: ["เครื่องอ่านบัตรไฟไหม้ทันที", "ตู้คอนโทรลเลอร์จะอ่านบิต 0 เป็น 1 และบิต 1 เป็น 0 ทำให้เกิด Parity Error และไม่เปิดประตู", "ประตูจะเปิดค้างตลอดเวลา", "ไม่มีผลกระทบ ระบบยังคงอ่านรหัสบัตรได้ตามปกติ"],
+          answer: 1,
+          exp: "เมื่อสลับสาย D0/D1 บิตทั้งหมดจะกลับด้าน ทำให้ตู้คอนโทรลเลอร์ตรวจเช็ค Parity ไม่ผ่านและปฏิเสธสิทธิ์"
+        },
+        {
+          q: "5. หน้าที่ของ Even Parity (บิตที่ 1) และ Odd Parity (บิตที่ 26) ในเฟรม Wiegand คืออะไร?",
+          options: ["ใช้สำหรับจ่ายไฟเลี้ยงให้บัตร", "ใช้ตรวจจับความผิดพลาดของข้อมูล (Error Checking) ระหว่างการส่ง", "ใช้บอกยี่ห้อของหัวอ่านบัตร", "ใช้เข้ารหัสข้อมูลป้องกันการดักฟัง"],
+          answer: 1,
+          exp: "Parity bit เป็นกลไกตรวจเช็คความสมบูรณ์ของบิตข้อมูล เพื่อให้แน่ใจว่าไม่มีสัญญาณรบกวนทำให้บิตขาดหาย"
+        }
+      ],
+      mod2: [
+        {
+          q: "1. การส่งสัญญาณบนสายคู่บิดเกลียว (Twisted Pair) ของบัส RS-485 มีลักษณะการทำงานอย่างไร?",
+          options: ["ส่งสัญญาณแบบขนาน 8 เส้น", "ส่งสัญญาณแบบผลต่างแรงดัน (Differential Signaling: Va - Vb)", "ใช้ระดับแรงดันเทียบกับกราวด์ดินเหมือน RS-232", "ส่งสัญญาณด้วยความถี่วิทยุไร้สาย"],
+          answer: 1,
+          exp: "RS-485 ใช้แรงดันผลต่างระหว่างสาย A และ B ทำให้ตัดสัญญาณรบกวนชนิดโหมดร่วม (Common-Mode Noise) ได้ดีเยี่ยม"
+        },
+        {
+          q: "2. การเชื่อมต่อโครงข่ายบัส RS-485 สำหรับอุปกรณ์หลายตัว (Multi-Drop) ต้องต่อแบบใดจึงถูกต้องตามมาตรฐาน?",
+          options: ["ต่อแบบรูปดาว (Star Topology)", "ต่อแบบวงแหวนปิด (Closed Ring)", "ต่อแบบร้อยพวงเป็นแถว (Daisy Chain)", "ต่อแบบกิ่งก้านต้นไม้ (Tree Topology)"],
+          answer: 2,
+          exp: "RS-485 ต้องต่อแบบ Daisy Chain ขนานสาย A และ B ไปตามจุดต่างๆ เพื่อป้องกันการสะท้อนของคลื่นสัญญาณ"
+        },
+        {
+          q: "3. ตัวต้านทาน Termination Resistor ขนาด 120 โอห์ม มีหน้าที่สำคัญอย่างไรในระบบบัส RS-485?",
+          options: ["ช่วยลดกระแสไฟไม่ให้ช็อตอุปกรณ์", "ต่อขนานที่หัว-ท้ายของบัส เพื่อป้องกันการสะท้อนกลับของคลื่นสัญญาณ (Signal Reflection)", "ใช้แปลงแรงดันจาก 24V เป็น 12V", "ใช้ระบายไฟฟ้าสถิตลงกราวด์"],
+          answer: 1,
+          exp: "Termination 120Ω มีค่าเท่ากับ Characteristic Impedance ของสาย จึงช่วยดูดซับสัญญาณไม่ให้สะท้อนกลับมากวนบัส"
+        },
+        {
+          q: "4. หากตู้คอนโทรลเลอร์ (Master) ตั้ง Baud Rate ไว้ที่ 9600 bps แต่เครื่องสแกนนิ้ว (Slave) ตั้งไว้ที่ 19200 bps ผลจะเป็นอย่างไร?",
+          options: ["อุปกรณ์ทั้งสองจะปรับความเร็วเข้าหากันอัตโนมัติ", "ตู้คอนโทรลเลอร์จะได้รับข้อมูลขยะ (Frame Error / Garbage Data) และสื่อสารไม่สำเร็จ", "ไฟร์วอลล์จะสั่งบล็อกพอร์ตการสื่อสาร", "สายสัญญาณบัสจะร้อนจัด"],
+          answer: 1,
+          exp: "การสื่อสารอนุกรม (Asynchronous Serial) อุปกรณ์ทุกตัวบนบัสเดียวกันต้องตั้ง Baud Rate ให้ตรงกันเป๊ะจึงจะถอดรหัสบิตได้"
+        },
+        {
+          q: "5. เมื่อตู้ควบคุม Master ส่งคำสั่งถามสถานะไปยัง Slave Node 0x03 แต่หน้าจอขึ้น 'TIMEOUT' สาเหตุที่เป็นไปได้มากที่สุดคืออะไร?",
+          options: ["มีสัญญาณรบกวนมากเกินไป", "ไม่มีอุปกรณ์หมายเลข 03 เชื่อมต่ออยู่บนบัส หรือสายสัญญาณของอุปกรณ์นั้นขาด/ไฟเลี้ยงไม่เข้า", "เครื่องอ่านบัตรถูกตั้งให้เป็น Master ซ้อนกัน", "ลืมต่อสายกราวด์ชิลด์"],
+          answer: 1,
+          exp: "Timeout เกิดจาก Master ส่ง Polling Frame ออกไปแล้วไม่มีอุปกรณ์ใดตอบ ACK กลับมาภายในเวลาที่กำหนด"
+        }
+      ],
+      mod3: [
+        {
+          q: "1. หากตั้งค่า IP ให้กล้อง CCTV เป็น 192.168.1.10 และเครื่อง NVR เป็น 192.168.1.100 ทั้งคู่มี Subnet Mask 255.255.255.0 ข้อใดถูกต้อง?",
+          options: ["อุปกรณ์ทั้งสองอยู่นอกวงแลน ต้องวิ่งผ่าน Router", "อุปกรณ์ทั้งสองอยู่ใน Network ID เดียวกัน (192.168.1.0/24) สามารถ Ping สื่อสารกันได้โดยตรง", "ต้องตั้ง Default Gateway ให้ตรงกับ IP ของกล้อง", "ไม่สามารถส่งข้อมูลภาพได้เพราะ IP ห่างกันเกินไป"],
+          answer: 1,
+          exp: "เมื่อ Subnet Mask คือ 255.255.255.0 ตัวเลข 3 ชุดแรก (192.168.1) จะเป็นวงแลนเดียวกัน ทำให้อุปกรณ์เชื่อมต่อถึงกันโดยตรงผ่าน Switch ได้"
+        },
+        {
+          q: "2. มาตรฐานสากล ONVIF (โดยเฉพาะ Profile S) มีบทบาทสำคัญอย่างไรในระบบกล้องวงจรปิด?",
+          options: ["ทำให้กล้องวงจรปิดสามารถบันทึกภาพลง SD Card ได้เร็วขึ้น", "เป็นมาตรฐานเปิดที่ช่วยให้กล้องและเครื่องบันทึก NVR ต่างยี่ห้อสามารถค้นหาและทำงานร่วมกันได้", "ใช้สำหรับจ่ายไฟผ่านสายแลน (PoE) ไปยังกล้อง", "ใช้บีบอัดไฟล์วิดีโอให้มีขนาดเล็กลง 50%"],
+          answer: 1,
+          exp: "ONVIF ถูกสร้างขึ้นเพื่อขจัดปัญหาระบบปิด ช่วยให้กล้องยี่ห้อ A สามารถสตรีมภาพเข้าเครื่องบันทึกยี่ห้อ B ได้ราบรื่น"
+        },
+        {
+          q: "3. คำสั่ง Ping บนระบบเครือข่ายทำงานภายใต้โปรโตคอลใด และมีประโยชน์หลักอย่างไร?",
+          options: ["HTTP - ใช้ทดสอบดาวน์โหลดภาพ", "ICMP - ใช้ส่งแพ็กเก็ต Echo Request เพื่อทดสอบความต่อเนื่องของสายสัญญาณแลนและการตอบสนองของอุปกรณ์", "FTP - ใช้ส่งไฟล์เฟิร์มแวร์", "DNS - ใช้แปลงหมายเลข IP เป็นชื่อโดเมน"],
+          answer: 1,
+          exp: "Ping ใช้โปรโตคอล ICMP เป็นเครื่องมือช่างพื้นฐานสำหรับตรวจเช็คว่าสายแลนขาด หลุด หรือคอนฟิก IP ผิดหรือไม่"
+        },
+        {
+          q: "4. พอร์ตมาตรฐานที่โปรโตคอล RTSP (Real-Time Streaming Protocol) นิยมใช้ในการสตรีมภาพวิดีโอสดคือพอร์ตใด?",
+          options: ["Port 21", "Port 80", "Port 443", "Port 554"],
+          answer: 3,
+          exp: "RTSP ใช้ Port 554 เป็นพอร์ตมาตรฐานสากลในการเจรจาเซสชันส่งสตรีมวิดีโอแบบสด (Live Streaming)"
+        },
+        {
+          q: "5. หากช่างติดตั้งกำหนด IP Address ของกล้องตัวที่ 1 และตัวที่ 2 เป็น '192.168.1.10' ซ้ำกัน จะเกิดปัญหาใดขึ้นในระบบ?",
+          options: ["กล้องทั้งสองตัวจะรวมภาพเข้าด้วยกันเป็นจอเดียว", "เกิดปัญหา IP Conflict ส่งผลให้ภาพจากกล้องทั้งคู่ติดๆ ดับๆ หรือหลุดการเชื่อมต่อไปทั้งสองตัว", "สวิตช์ PoE จะตัดไฟชัตดาวน์ตัวเอง", "แบนด์วิธของเครือข่ายจะเพิ่มขึ้นเป็นสองเท่า"],
+          answer: 1,
+          exp: "IP Address บนเครือข่ายเดียวกันเปรียบเหมือนบ้านเลขที่ ห้ามซ้ำกันเด็ดขาด มิฉะนั้น Switch จะสับสนตาราง MAC Address จนรับส่งภาพล้มเหลว"
+        }
+      ],
+      mod4: [
+        {
+          q: "1. โปรโตคอล MQTT มีรูปแบบสถาปัตยกรรมการสื่อสารแบบใดที่เหมาะกับระบบรักษาความปลอดภัย IoT?",
+          options: ["Client-Server Request/Response แบบเว็บเพจทั่วไป", "Publish / Subscribe (ผู้ส่งข่าวสาร / ผู้รับข่าวสาร) โดยมี Broker เป็นตัวกลางกระจายข้อมูล", "Peer-to-Peer โดยไม่มีศูนย์กลาง", "Master/Slave แบบเส้นทางเดี่ยว"],
+          answer: 1,
+          exp: "MQTT ทำงานแบบ Pub/Sub กินแบนด์วิธต่ำมาก กล้อง AI สามารถ Publish เหตุการณ์เตือนภัยไปให้ผู้รับหลายอุปกรณ์พร้อมกันได้ทันที"
+        },
+        {
+          q: "2. รูปแบบโครงสร้างข้อมูลยอดนิยมที่กล้อง Edge AI ใช้ส่งข้อมูลการตรวจจับ (เช่น ชื่อบุคคล, ค่าความแม่นยำ) คือข้อใด?",
+          options: ["ไฟล์ภาพบิตแมปดิบ (Raw BMP)", "JSON Payload (ข้อความคู่คีย์-ค่า เช่น { \"event\": \"FACE_OK\" })", "เลขฐานสิบหกแบบไม่มีหัวข้อกำกับ", "สัญญาณความถี่วิทยุแบบอนาล็อก"],
+          answer: 1,
+          exp: "JSON เป็นรูปแบบข้อความน้ำหนักเบา อ่านเข้าใจง่าย และเป็นมาตรฐานสากลในการเชื่อมโยง API และ Event ระหว่างระบบ"
+        },
+        {
+          q: "3. ระบบกลอนแม่เหล็กไฟฟ้า (Magnetic Lock) ที่ใช้กับประตูหนีไฟ ต้องทำงานแบบใดตามมาตรฐานความปลอดภัยในชีวิต (Life Safety Code)?",
+          options: ["Fail-Secure (เมื่อไฟดับ ประตูต้องล็อกแน่นหนา ป้องกันคนหนี)", "Fail-Safe (เมื่อไฟดับหรือเกิดเหตุเพลิงไหม้ ประตูต้องปลดล็อกเปิดออกได้ทันที)", "Manual Lock (ต้องใช้ลูกกุญแจไขเท่านั้น)", "Random Lock (สลับสถานะตามเวลา)"],
+          answer: 1,
+          exp: "ประตูหนีไฟต้องเป็นระบบ Fail-Safe คือใช้ไฟเลี้ยงในการดูดล็อก เมื่อเกิดเพลิงไหม้หรือตัดไฟ ประตูต้องคลายล็อกอัตโนมัติเพื่อให้คนอพยพได้"
+        },
+        {
+          q: "4. การทำ 'Event-Action Linkage' ในระบบรักษาความปลอดภัยแบบบูรณาการหมายถึงอะไร?",
+          options: ["การคำนวณราคากล้องวงจรปิดล่วงหน้า", "การตั้งเงื่อนไขอัตโนมัติข้ามระบบ เช่น เมื่อเกิดเหตุการณ์ A (กล้องตรวจพบควัน) ให้ระบบสั่งการ B ทันที (ปลดล็อกประตูหนีไฟและเปิดไซเรน)", "การเดินสายท่อร้อยสายไฟให้สวยงาม", "การทำความสะอาดเลนส์กล้องประจำปี"],
+          answer: 1,
+          exp: "Event-Action Linkage คือหัวใจของ Integrated Security System เป็นการสั่งให้อุปกรณ์ทำงานตอบสนองต่อเหตุการณ์ฉุกเฉินข้ามระบบโดยอัตโนมัติ"
+        },
+        {
+          q: "5. หน้าสัมผัสรีเลย์ของตู้ควบคุมสัญญาณแจ้งเหตุเพลิงไหม้ (Fire Alarm Interface) มักต่อพ่วงกับวงจรประตูนิรภัยอย่างไร?",
+          options: ["ต่อขนานกับแหล่งจ่ายไฟเพื่อเพิ่มแรงดัน", "ต่ออนุกรมคั่นสายไฟเลี้ยงกลอนประตูแบบ NC (Normally Closed) เพื่อให้ตัดวงจรไฟเมื่อมีสัญญาณแจ้งเตือนไฟไหม้", "ต่อเข้ากับสายกราวด์ของกล้องวงจรปิด", "ต่อเข้ากับพอร์ต USB ของคอมพิวเตอร์"],
+          answer: 1,
+          exp: "การต่อตัดวงจรไฟเลี้ยง (Power Cut) ผ่านหน้าสัมผัส NC เป็นวิธีที่เป็นไปตามมาตรฐานความปลอดภัย ไม่ว่าจะเกิดเหตุไฟฟ้าดับหรือตู้สั่งทริกเกอร์ ประตูจะเปิดเสมอ"
+        }
+      ]
+    };
+
+    function renderQuiz(mod) {
+      const container = document.getElementById(`quiz-container-${mod}`);
+      const questions = quizData[mod];
+      if (!container || !questions) return;
+
+      container.innerHTML = questions.map((item, qIdx) => `
+        <div id="${mod}-qbox-${qIdx}" class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2.5 transition duration-200">
+          <div class="text-xs font-semibold text-slate-200">${item.q}</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            ${item.options.map((opt, oIdx) => `
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 cursor-pointer text-slate-300">
+                <input type="radio" name="${mod}-q-${qIdx}" value="${oIdx}" class="text-indigo-600 bg-slate-950 border-slate-700">
+                <span>${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div id="${mod}-exp-${qIdx}" class="hidden text-[11px] p-2.5 rounded-lg mono mt-2"></div>
+        </div>
+      `).join('');
+    }
+
+    function submitQuiz(mod) {
+      const questions = quizData[mod];
+      let score = 0;
+      let allAnswered = true;
+
+      questions.forEach((item, qIdx) => {
+        const selected = document.querySelector(`input[name="${mod}-q-${qIdx}"]:checked`);
+        const box = document.getElementById(`${mod}-qbox-${qIdx}`);
+        const exp = document.getElementById(`${mod}-exp-${qIdx}`);
+
+        if (!selected) {
+          allAnswered = false;
+          box.className = "bg-slate-950 p-4 rounded-xl border border-amber-500/50 space-y-2.5";
+          return;
+        }
+
+        const userVal = parseInt(selected.value);
+        exp.classList.remove('hidden');
+
+        if (userVal === item.answer) {
+          score++;
+          box.className = "bg-slate-950 p-4 rounded-xl border border-emerald-500/50 space-y-2.5";
+          exp.className = "text-[11px] p-2.5 rounded-lg mono mt-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+          exp.innerHTML = `<strong>✔ ถูกต้อง:</strong> ${item.exp}`;
+        } else {
+          box.className = "bg-slate-950 p-4 rounded-xl border border-rose-500/50 space-y-2.5";
+          exp.className = "text-[11px] p-2.5 rounded-lg mono mt-2 bg-rose-500/10 text-rose-400 border border-rose-500/20";
+          exp.innerHTML = `<strong>✖ ไม่ถูกต้อง (เฉลยข้อ: ${item.options[item.answer]}):</strong> ${item.exp}`;
+        }
+      });
+
+      if (!allAnswered) {
+        alert("กรุณาตอบคำถามให้ครบทุกข้อก่อนส่งคำตอบครับ");
+        return;
+      }
+
+      const scoreBadge = document.getElementById(`quiz-score-${mod}`);
+      scoreBadge.textContent = `คะแนน: ${score}/5`;
+
+      if (score >= 4) {
+        scoreBadge.className = "text-xs font-mono px-2.5 py-1 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold";
+        playFanfare();
+      } else {
+        scoreBadge.className = "text-xs font-mono px-2.5 py-1 rounded bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold";
+        playBeep(250, 0.3, 'sawtooth');
+      }
+    }
+
+    function resetQuiz(mod) {
+      document.querySelectorAll(`input[name^="${mod}-q-"]`).forEach(el => el.checked = false);
+      quizData[mod].forEach((_, qIdx) => {
+        const box = document.getElementById(`${mod}-qbox-${qIdx}`);
+        const exp = document.getElementById(`${mod}-exp-${qIdx}`);
+        if (box) box.className = "bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2.5";
+        if (exp) {
+          exp.classList.add('hidden');
+          exp.innerHTML = "";
+        }
+      });
+      const scoreBadge = document.getElementById(`quiz-score-${mod}`);
+      if (scoreBadge) {
+        scoreBadge.textContent = "คะแนน: -/5";
+        scoreBadge.className = "text-xs font-mono px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400";
+      }
+      playRelay();
+    }
+
+    // Initialize Canvas & Quizzes on Page Load
+    window.onload = () => {
+      drawM1Grid();
+      updateM1Preview();
+      renderQuiz('mod1');
+      renderQuiz('mod2');
+      renderQuiz('mod3');
+      renderQuiz('mod4');
+    };
+  </script>
+</body>
+</html>
